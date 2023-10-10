@@ -1,0 +1,52 @@
+word,display,list_number
+bonds (money),Slider,3
+bow (bend),Slider,3
+case (legal),Slider,3
+chair (seat),Slider,3
+cleaner (maid),Slider,3
+cold (illness),Slider,3
+crook (criminal),Slider,3
+digit (number),Slider,3
+dress (formal),Slider,3
+fair (honest),Slider,3
+fork (cutlery),Slider,3
+foul (disgusting),Slider,3
+game (animal),Slider,3
+game (sport),Slider,3
+gay (joyous),Slider,3
+gorge (canyon),Slider,3
+gorge (overeat),Slider,3
+hit (music),Slider,3
+judge (courtroom),Slider,3
+letters (correspondence),Slider,3
+lie (untruth),Slider,3
+medium (spiritualist),Slider,3
+nail (hammer),Slider,3
+nuts (crazy),Slider,3
+page (paper),Slider,3
+pine (long for),Slider,3
+pitch (musical),Slider,3
+pitch (tar),Slider,3
+prick (dick),Slider,3
+process (procedure),Slider,3
+pulse (e.g. beans),Slider,3
+punch (drink),Slider,3
+roll (bread),Slider,3
+run (series),Slider,3
+serve (perform duties),Slider,3
+shell (sea),Slider,3
+slip (notepaper),Slider,3
+smart (well-dressed),Slider,3
+stake (investment),Slider,3
+stem (origin),Slider,3
+stool (chair),Slider,3
+suit (special clothes),Slider,3
+surf (riding waves),Slider,3
+tie (neck),Slider,3
+train (procession),Slider,3
+treble (triple),Slider,3
+trial (test),Slider,3
+upset (sad),Slider,3
+watch (look),Slider,3
+wing (plane),Slider,3
+wired (electric),Slider,3
