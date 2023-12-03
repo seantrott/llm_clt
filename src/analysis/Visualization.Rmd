@@ -3,10 +3,15 @@ title: "LLMs and the wisdom of small crowds"
 author: "Sean Trott"
 date: "October 6, 2023"
 output:
+  # pdf_document: 
+  #    fig_caption: yes
+  #    keep_md: yes
+  #    keep_tex: yes
   html_document:
-    keep_md: yes
-    toc: yes
-    toc_float: yes
+     keep_md: yes
+     toc: yes
+     toc_float: yes
+
 ---
 
 ```{r setup, include=FALSE}
@@ -23,9 +28,13 @@ library(ggridges)
 library(lmerTest)
 library(ggrepel)
 library(tools)
+library(viridis)
+
+all_colors <- viridis::viridis(10, option = "mako")
+my_colors <- all_colors[c(3, 5, 7)]  # Selecting specific colors from the palette
 ```
 
-# Glasgow Norms
+# Glasgow Concreteness Norms
 
 ## Load data
 
@@ -50,18 +59,17 @@ df_llm %>%
 
 ## Figure 1a
 
-```{r}
+```{r 1a}
 df_individuals = df_all_results %>%
   filter(k == 1)
 
 df_individuals %>%
   ggplot(aes(x = spearman_ppt)) +
   geom_histogram(alpha = .5) +
-  labs(x="Correlation with Original Glasgow Norms", y="Count") +
+  labs(x="Correlation with Original Concreteness Norms", y="Count") +
   theme_minimal() +
   geom_vline(xintercept = mean(df_llm$spearman_llm), ### LLM 
-              linetype = "dotted", color = "blue",
-             size = 1.2, alpha = .5) +
+              linetype = "dotted", color = "blue", alpha = .8) +
   theme(text = element_text(size = 15))
 
 ```
@@ -70,7 +78,7 @@ df_individuals %>%
 
 
 
-```{r}
+```{r 1b}
 
 ### Pivot
 df_results_long = df_all_results %>%
@@ -96,15 +104,16 @@ df_results_summ = df_results_long %>%
 df_results_summ %>%
   ggplot(aes(x = k, y = m_corr)) +
   geom_point(aes(color=factor(sample_type), shape = factor(sample_type)), size=3, alpha = .5) +  # Add points
-  geom_line(aes(color=factor(sample_type)), alpha = .6) +  # Connect points with lines
-  geom_errorbar(aes(ymin=m_corr-se_corr * 2, ymax=m_corr+se_corr * 2, width=0.2, color = factor(sample_type)), alpha = .6) + 
-  labs(x="Number of Participants", y="Correlation with Glasgow Norms", color = "Sample Type", shape = "Sample Type") +
+  geom_line(aes(color=factor(sample_type))) +  # Connect points with lines
+  geom_errorbar(aes(ymin=m_corr-se_corr * 2, ymax=m_corr+se_corr * 2, width=0.2, color = factor(sample_type))) + 
+  labs(x="Number of Participants", y="Correlation with Concreteness Norms", color = "Sample Type", shape = "Sample Type") +
   theme_minimal() +
   geom_hline(yintercept = mean(df_llm$spearman_llm), ### LLM 
               linetype = "dotted", color = "blue",
-             size = 1.2, alpha = .5) +
+            alpha = .8) +
   theme(text = element_text(size = 15),
-        legend.position="bottom")
+        legend.position="bottom") +
+scale_color_manual(values = my_colors)
 
 ```
 
@@ -146,7 +155,7 @@ GPT_CPJ = (NUM_SAMPLED_PER_JUDGMENT / 1000) * COST_PER_1K_SAMPLED + 1000 * (NUM_
 ### Visualizing
 
 
-```{r}
+```{r 1c}
 ### Visualize
 
 df_costs_summ = df_all_results %>%
@@ -194,6 +203,7 @@ df_costs_summ_long <- df_costs_summ %>%
   ) %>%
   mutate(sample_type = toTitleCase(sample_type))
 
+
 df_costs_summ_long %>%
   ggplot(aes(x = m_quality, y = m_cost, color = sample_type, shape = sample_type)) +
   geom_point(size=3, alpha = .5) +  # Add points
@@ -203,7 +213,9 @@ df_costs_summ_long %>%
   theme_minimal() +
   geom_vline(xintercept = 1, linetype = "dotted") +
   theme(text = element_text(size = 15),
-        legend.position="bottom") 
+        legend.position="bottom") +
+  scale_color_manual(values = my_colors)
+  
 ```
 
 # RAW-C Norms
@@ -227,9 +239,9 @@ df_llm %>%
 
 ```
 
-## Figure 1a
+## Figure 1d
 
-```{r}
+```{r 1d}
 df_individuals = df_all_results %>%
   filter(k == 1)
 
@@ -247,9 +259,9 @@ df_individuals %>%
 
 ```
 
-## Figure 1b
+## Figure 1e
 
-```{r}
+```{r 1e}
 ### Pivot
 df_results_long = df_all_results %>%
   select('spearman_centaur1', 'spearman_centaur2', 'spearman_ppt',
@@ -283,12 +295,13 @@ df_results_summ %>%
               linetype = "dotted", color = "blue",
              size = 1.2, alpha = .5) +
   theme(text = element_text(size = 15),
-        legend.position="bottom")
+        legend.position="bottom")+
+  scale_color_manual(values = my_colors)
 
 
 ```
 
-## Figure 1c
+## Figure 1f
 
 ### Setting up cost assumptions
 
@@ -324,7 +337,7 @@ GPT_CPJ = (NUM_SAMPLED_PER_JUDGMENT / 1000) * COST_PER_1K_SAMPLED + 1000 * (NUM_
 ### Visualizing
 
 
-```{r}
+```{r 1f}
 ### Visualize
 
 df_costs_summ = df_all_results %>%
@@ -382,7 +395,191 @@ df_costs_summ_long %>%
   theme_minimal() +
   geom_vline(xintercept = 1, linetype = "dotted") +
   theme(text = element_text(size = 15),
-        legend.position="bottom") 
+        legend.position="bottom") +
+  scale_color_manual(values = my_colors)
 ```
 
 
+# Glasgow Valence Norms
+
+## Load data
+
+```{r}
+### setwd("/Users/seantrott/Dropbox/UCSD/Research/NLMs/llm_clt/src/analysis/")
+
+### Read in all data
+df_all_results = read_csv("../../data/processed/gc_valence_results.csv")
+nrow(df_all_results)
+
+### How many per list?
+table(df_all_results$list_num)
+
+### LLM data
+df_llm = read_csv("../../data/processed/gc_valence_llm_corrs.csv")
+df_llm %>%
+  summarise(m_spearmam = mean(spearman_llm),
+            sd_spearman = sd(spearman_llm))
+
+
+```
+
+## Figure 1g
+
+```{r 1g}
+df_individuals = df_all_results %>%
+  filter(k == 1)
+
+df_individuals %>%
+  ggplot(aes(x = spearman_ppt)) +
+  geom_histogram(alpha = .5) +
+  labs(x="Correlation with Original Valence Norms", y="Count") +
+  theme_minimal() +
+  geom_vline(xintercept = mean(df_llm$spearman_llm), ### LLM 
+              linetype = "dotted", color = "blue", alpha = .8) +
+  theme(text = element_text(size = 15))
+
+```
+
+## Figure 1h
+
+
+
+```{r 1h}
+
+### Pivot
+df_results_long = df_all_results %>%
+  select('spearman_centaur1', 'spearman_centaur2', 'spearman_ppt',
+         'k', 'combo_index', 'list_num') %>%
+  pivot_longer(cols = c('spearman_centaur1', 'spearman_centaur2', 'spearman_ppt'),
+               names_to = "sample_type",
+               values_to = "correlation") %>%
+  mutate(sample_type = sub("spearman_", "", sample_type)) %>%
+  mutate(sample_type = ifelse(
+    sample_type == "ppt", "Human", sample_type
+  ))
+
+
+### Visualize
+df_results_summ = df_results_long %>%
+  group_by(k, sample_type) %>%
+  summarize(m_corr = mean(correlation),
+            sd_corr = sd(correlation),
+            se_corr = sd(correlation)/sqrt(n()))  %>%
+  mutate(sample_type = toTitleCase(sample_type)) 
+
+df_results_summ %>%
+  ggplot(aes(x = k, y = m_corr)) +
+  geom_point(aes(color=factor(sample_type), shape = factor(sample_type)), size=3, alpha = .5) +  # Add points
+  geom_line(aes(color=factor(sample_type))) +  # Connect points with lines
+  geom_errorbar(aes(ymin=m_corr-se_corr * 2, ymax=m_corr+se_corr * 2, width=0.2, color = factor(sample_type))) + 
+  labs(x="Number of Participants", y="Correlation with Valence Norms", color = "Sample Type", shape = "Sample Type") +
+  theme_minimal() +
+  geom_hline(yintercept = mean(df_llm$spearman_llm), ### LLM 
+              linetype = "dotted", color = "blue",
+            alpha = .8) +
+  theme(text = element_text(size = 15),
+        legend.position="bottom") +
+scale_color_manual(values = my_colors)
+
+```
+
+## Figure 1i
+
+Here, we visualize projected differences in **quality** and **cost** of a human sample vs. GPT-4.
+
+### Setting up cost assumptions
+
+For human cost, we assume:
+
+-   Rate of \$12 an hour.\
+-   Approximately 5 seconds per judgment.\
+-   Approximately \~720 judgments per hour.
+
+For GPT-4 cost, we assume:
+
+-   \$0.06 per 1000 generated tokens.
+-   \$0.03 per 1000 sampled tokens.
+-   Approximately 20 sampled tokens per judgment.
+-   Approximately 10 generated tokens per judgment.
+
+```{r}
+### Human assumptions
+RATE = 12
+SECONDS_PER_JUDGMENT = 5
+
+HUMAN_CPJ = RATE / (3600/SECONDS_PER_JUDGMENT)
+
+### GPT-4 assumptions
+COST_PER_1K_SAMPLED = 0.0003
+COST_PER_1K_GENERATED = 0.0006
+NUM_SAMPLED_PER_JUDGMENT = 20
+NUM_GENERATED_PER_JUDGMENT = 10
+
+GPT_CPJ = (NUM_SAMPLED_PER_JUDGMENT / 1000) * COST_PER_1K_SAMPLED + 1000 * (NUM_GENERATED_PER_JUDGMENT / 1000) * COST_PER_1K_GENERATED
+```
+
+### Visualizing
+
+
+```{r 1i}
+### Visualize
+
+df_costs_summ = df_all_results %>%
+  mutate(ratio_human_quality = spearman_ppt / spearman_llm) %>%
+  mutate(ratio_human_cost = (k * HUMAN_CPJ) / GPT_CPJ) %>%
+  mutate(ratio_centaur1_quality = spearman_centaur1 / spearman_llm) %>%
+  mutate(ratio_centaur1_cost = (GPT_CPJ + k * HUMAN_CPJ) / GPT_CPJ) %>%
+  mutate(ratio_centaur2_quality = spearman_centaur2 / spearman_llm) %>%
+  mutate(ratio_centaur2_cost = (GPT_CPJ + k * HUMAN_CPJ) / GPT_CPJ) %>%
+  group_by(k) %>%
+  summarise(m_human_ratio_quality = mean(ratio_human_quality),
+            se_human_ratio_quality = sd(ratio_human_quality)/sqrt(n()),
+            m_human_ratio_cost = mean(ratio_human_cost),
+            se_human_ratio_cost = sd(ratio_human_cost),
+            ### Centaur1
+            m_centaur1_ratio_quality = mean(ratio_centaur1_quality),
+            se_centaur1_ratio_quality = sd(ratio_centaur1_quality)/sqrt(n()),
+            m_centaur1_ratio_cost = mean(ratio_centaur1_cost),
+            se_centaur1_ratio_cost = sd(ratio_centaur1_cost),
+            ### Centaur2
+            m_centaur2_ratio_quality = mean(ratio_centaur2_quality),
+            se_centaur2_ratio_quality = sd(ratio_centaur2_quality)/sqrt(n()),
+            m_centaur2_ratio_cost = mean(ratio_centaur2_cost),
+            se_centaur2_ratio_cost = sd(ratio_centaur2_cost))
+
+df_costs_summ_long <- df_costs_summ %>%
+  pivot_longer(
+    cols = -k,
+    names_to = "variable",
+    values_to = "value"
+  ) %>%
+  mutate(
+    sample_type = str_extract(variable, "human|centaur1|centaur2"),
+    metric = case_when(
+      str_detect(variable, "m_.*_quality") ~ "m_quality",
+      str_detect(variable, "se_.*_quality") ~ "se_quality",
+      str_detect(variable, "m_.*_cost") ~ "m_cost",
+      str_detect(variable, "se_.*_cost") ~ "se_cost"
+    )
+  ) %>%
+  select(-variable) %>%
+  pivot_wider(
+    names_from = metric,
+    values_from = value
+  ) %>%
+  mutate(sample_type = toTitleCase(sample_type))
+
+
+df_costs_summ_long %>%
+  ggplot(aes(x = m_quality, y = m_cost, color = sample_type, shape = sample_type)) +
+  geom_point(size=3, alpha = .5) +  # Add points
+  geom_line(alpha = .6) +  # Connect points with lines
+  labs(x="Quality Ratio", y="Cost Ratio",
+       color = "Sample Type", shape = "Sample Type") +
+  theme_minimal() +
+  geom_vline(xintercept = 1, linetype = "dotted") +
+  theme(text = element_text(size = 15),
+        legend.position="bottom") +
+  scale_color_manual(values = my_colors)
+  
+```
